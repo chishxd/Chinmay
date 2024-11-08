@@ -1,24 +1,33 @@
-# todo = []
+# todo = [access tasks via dates]
 def write():
-    todo = []
+    todo = {}
+    task = []
+    date = input("Enter The Date:\n")
     while True:
+        print("\nEnter The Tasks: ")
         i = input()
-        todo.append(i)
+        task.append(i)
         if i == '':
             break
+    todo[date] = task
     return todo
 
-def create(todo):
-    with open("todo.txt",'w') as ToDo:
-        for i in range(len(todo)):
-            ToDo.write(f"{todo[i]}\n")
-    ToDo.close()
+def create(todo,m):
+    if m == 'a':
+        with open("todo.txt",'a') as ToDo:
+            for i in todo:
+                ToDo.write(f"{i}\n")
+                for j in range(len(todo[i])):
+                    ToDo.write(f"   {todo[i][j]}\n")
+            ToDo.close()
+    elif m == 'w':
+        with open("todo.txt",'w') as ToDo:
+            for i in todo:
+                ToDo.write(f"{i}\n")
+                for j in range(len(todo[i])):
+                    ToDo.write(f"   {todo[i][j]}\n")
+            ToDo.close()
 
-def appendTask(Todo):
-    todo = open("todo.txt", 'a')
-    for i in range(len(Todo)):
-        todo.write(f"{Todo[i]}\n")
-    todo.close()
 
 def show():
     f = open('todo.txt', 'r')
@@ -29,17 +38,16 @@ def show():
 def main():
     while True:
         print("\nWelcome To My To-Do List project!")
-        print('''1. Create A Task
-2. Add New Task to Workspace
-3. Display A Task ''')
-        i = int(input())
-        if i == 1:
+        i = input('''1. Create A New Workspace
+2. Add to current workspace
+3. Display A Task\n''')
+        if i in ('1','a'):
             todo = write()
-            create(todo)
-        elif i == 2:
-            newTask = write()
-            appendTask(newTask)
-        elif i == 3:
+            create(todo,'w')
+        elif i in ('2','b'):
+            todo = write()
+            create(todo,'a')
+        elif i in ('3','c'):
             show()
         
         e = input("Enter E to exit: ").lower()
