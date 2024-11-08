@@ -49,6 +49,8 @@ def main():
             create(todo,'a')
         elif i in ('3','c'):
             show()
+        else:
+            print("Please enter a valid value.")
         
         e = input("Enter E to exit: ").lower()
         if e == 'e':
