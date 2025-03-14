@@ -3,5 +3,5 @@ Angela Yu's 100 days of code: https://1337x.to/torrent/5696904/100-Days-of-Code-
 Any Books: annas-archive.org
 MUST HAVES:
 1. https://www.reddit.com/r/Piracy/wiki/megathread/
-2. fmhy.net
+2. https://fmhy.net/
 3. https://github.com/prakhar1989/awesome-courses/
