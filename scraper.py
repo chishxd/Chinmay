@@ -25,13 +25,13 @@ jobs_list = results.find("ol", class_="list-recent-jobs list-row-container menu"
 #     job_card for job_card in li_list if job_card.find("span", class_="listing-location") and "united states" in job_card.find("span", class_="listing-location").text.strip().lower()]
 
 for job_card in jobs_list:
-    title_span = job_card.find("span", class_="listing-company-name").find("a") if job_card.find("span", class_="listing-company-name").find("a") else None
+    title_span = job_card.find("span", class_="listing-company-name").find("a") if job_card.find("span", class_="listing-company-name").find("a") else "Unable to access Title"
     # title = title_span.find("a") if title_span else None
     
-    company_span = job_card.find("span", class_="listing-company-name").find("a") if job_card.find("span", class_="listing-company-name").find("a") else None
+    company_span = job_card.find("span", class_="listing-company-name").find("a") if job_card.find("span", class_="listing-company-name").find("a") else "Couldn't find Company"
     # company = company_span.find("a") if company_span else None
     
-    location_span = job_card.find("span", class_="listing-location").find("a") if job_card.find("span", class_="listing-location").find("a") else None
+    location_span = job_card.find("span", class_="listing-location").find("a") if job_card.find("span", class_="listing-location").find("a") else "Unable to show location"
     # location = location_span.find("a") if location_span else None
     
     link_url = title_span["href"] if title_span else None
