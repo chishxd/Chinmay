@@ -15,6 +15,9 @@ soup = BeautifulSoup(page.content, "html.parser")
 
 # Find the section containing job listings
 job_results = soup.find("section", class_="job_list")
+if not job_results:
+    print("Nothing Found")
+    exit()
 job_listings = job_results.find_all("div", class_="job")
 
 # Iterate through each job listing
@@ -31,15 +34,17 @@ for job_result in job_listings:
     info_span = job_result.find_all("span", class_="info")
     span_texts = [span.text.strip() for span in info_span]  # Extract text from each span
 
-    #Extract Apply Button
-    apply = job_result.find("a")["href"] if job_result.find("a")["href"] else "No Application"
+    apply_tag = job_result.find("a")
+    apply_link = f"https://pythonjobs.github.io{apply_tag['href']}" if apply_tag and "href" in apply_tag.attrs else "No Application"
+
     # Print the extracted information
     if "Remote" in span_texts:
         print(f"\nName: {title}")
         print(f"Details: {details}")
-        Information = ["Location", "Date", "Tenure", "Company"]
-        for i in range(len(span_texts)):
-            print(f"{Information[i]} : {span_texts[i]}")
+        info_labels = ["Location", "Date", "Tenure", "Company"]
+        for i, text in enumerate(span_texts):
+            label = info_labels[i] if i < len(info_labels) else f"Extra Info {i+1}"
+            print(f"{label}: {text}")
         # print(f"Date: {date.text.strip()}")
-        print(f"Read More: https://pythonjobs.github.io{apply}")
+        print(f"{apply_link}")
         print()
