@@ -45,4 +45,4 @@ for job_card in jobs_list:
     print(title_span.text.strip())
     print(company_span.text.strip())
     print(location_span.text.strip())
-    print(f"Apply Here: {link_url}\n")
+    print(f"Apply Here: https://www.python.org{link_url}\n")
