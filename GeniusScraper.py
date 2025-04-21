@@ -1,41 +1,55 @@
 import requests
 from bs4 import BeautifulSoup
+import os
+from urllib.parse import urlparse
 
-url = "https://genius.com/albums/The-weeknd/House-of-balloons"
+# Setup
+base_url = "https://genius.com/albums/The-weeknd/House-of-balloons"
 headers = {'User-Agent': 'Mozilla/5.0'}
-response = requests.get("https://genius.com/albums/The-weeknd/House-of-balloons")
-html = response.text
 
-soup = BeautifulSoup(html, "html.parser")
-
+# Step 1: Get song URLs from album page
+response = requests.get(base_url, headers=headers)
+soup = BeautifulSoup(response.text, "html.parser")
 songs_list = soup.find_all("a", class_="u-display_block", href=True)
 
+seen = set()
 url_list = []
+
 for song in songs_list:
-    href = song["href"] # type: ignore[]
-    if "The-weeknd" in href and 'lyrics' in href:
-        url_list.append(href)
+    href = song["href"]
+    if href.endswith("-lyrics"):
+        path = urlparse(href).path.lower()
+        if path not in seen:
+            seen.add(path)
+            url_list.append(href)
+# Verify total count
+print(f"Found {len(url_list)} unique song URLs.")
+if len(url_list) != 9:
+    print("⚠️ Warning: Expected 9 songs. You might be missing one or have extras.")
 
-for url in url_list:
-    res = requests.get(url)
+# Step 2: Create output dir
+os.makedirs("lyrics_output", exist_ok=True)
+
+# Step 3: Scrape lyrics and save to .txt
+for idx, url in enumerate(url_list, 1):
+    res = requests.get(url, headers=headers)
     soup = BeautifulSoup(res.text, "html.parser")
-    
-    lyrics_a = soup.find_all('a', class_="ReferentFragment-desktop__ClickTarget-sc-380d78dd-0 jCKWLY")
-    lyrics_span = soup.find_all('span', class_="ReferentFragment-desktop__Highlight-sc-380d78dd-1 fIkrDi")
 
-    title_h1 = soup.find('h1', class_ = 'SongHeaderV3-desktop__Title-sc-12378ce7-9 iHGygD')
-    if title_h1 is not None:
-        span = title_h1.find('span', class_="SongHeaderV3-desktop__HiddenMask-sc-12378ce7-13 cAUebg") #type:ignore
-        if span is not None:
-            print(f"----{span.get_text()}----")
-            print()
-        else:
-            print("Span not found inside h1")
-    else:
-        print("Title Not Found")
-        print()
+    # Extract title
+    title_h1 = soup.find('h1')
+    title = title_h1.get_text(strip=True) if title_h1 else f"track_{idx}"
+    safe_title = "".join(c for c in title if c.isalnum() or c in (' ', '_', '-')).rstrip()
 
-    if lyrics_span:
-        for lyrics in lyrics_span:
-            print(lyrics.get_text("\n").strip())
-            print()
+    # Extract lyrics
+    lyrics_blocks = soup.find_all('span', class_="ReferentFragment-desktop__Highlight-sc-380d78dd-1 fIkrDi")
+    lyrics = "\n".join([block.get_text(separator="\n").strip() for block in lyrics_blocks]) if lyrics_blocks else "----Lyrics Not Found----"
+
+    # Save to text file
+    filepath = os.path.join("lyrics_output", f"{safe_title}.txt")
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write(lyrics)
+
+    print(f"[{idx}/{len(url_list)}] Saved: {safe_title}.txt")
+
+print("\n✅ DONE. Lyrics saved to ./lyrics_output/")
+
