@@ -125,8 +125,9 @@ def main():
             f.write(lyrics)
         
         print(f"[{idx}/{len(url_list)}] Saved: {title}.txt")
-    
+
     print(f"Scraped {len(url_list)} songs successfully.")
 
 if __name__ == "__main__":
     main()
+
